@@ -1,0 +1,30 @@
+# 虚拟环境
+.venv/
+
+# Python 缓存
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+
+# 数据文件（HDF5/strc 文件较大，不纳入版本控制）
+*.strc
+*.hdf5
+*.h5
+
+# Jupyter Notebook 检查点
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Streamlit 上传的临时文件
+_uploaded_*
+
+# 冒烟测试
+smoke_test.py
