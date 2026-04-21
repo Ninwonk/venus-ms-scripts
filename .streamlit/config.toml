@@ -1,3 +1,5 @@
 [server]
 # 最大上传文件大小（单位：MB），默认 200，改为 4096 (4GB)
 maxUploadSize = 4096
+# 最大 WebSocket 消息大小（单位：MB），默认 200，需 >= maxUploadSize
+maxMessageSize = 4096
