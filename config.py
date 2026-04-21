@@ -50,12 +50,32 @@ class AppConfig:
     # 默认光斑配对关系：(入射光通道, 反射光通道)
     # 通道编号为 1-based，对应传感器列（数据文件第3~14列分别为通道1~12）
     spots: List[SpotConfig] = field(default_factory=lambda: [
-        SpotConfig(name="光斑1", incident_channel=1, reflected_channel=2),
-        SpotConfig(name="光斑2", incident_channel=3, reflected_channel=4),
-        SpotConfig(name="光斑3", incident_channel=5, reflected_channel=9),
-        SpotConfig(name="光斑4", incident_channel=6, reflected_channel=10),
-        SpotConfig(name="光斑5", incident_channel=7, reflected_channel=11),
-        SpotConfig(name="光斑6", incident_channel=8, reflected_channel=12),
+        SpotConfig(
+            name="光斑1",
+            incident_channel=5,
+            reflected_channel=9,
+            reflected_efficiency=2.2748,
+        ),
+        SpotConfig(
+            name="光斑2",
+            incident_channel=6,
+            reflected_channel=10,
+            reflected_efficiency=2.15598,
+        ),
+        SpotConfig(
+            name="光斑3",
+            incident_channel=7,
+            reflected_channel=11,
+            reflected_efficiency=2.18705,
+        ),
+        SpotConfig(
+            name="光斑4",
+            incident_channel=8,
+            reflected_channel=12,
+            reflected_efficiency=2.11911,
+        ),
+        SpotConfig(name="光斑5", incident_channel=1, reflected_channel=2),
+        SpotConfig(name="光斑6", incident_channel=3, reflected_channel=4),
     ])
 
     # 衍射效率合格范围 (最小值, 最大值)

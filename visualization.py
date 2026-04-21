@@ -375,3 +375,106 @@ def plot_diff_heatmap_plotly(
     )
 
     return fig
+
+
+def plot_calibration_result_plotly(
+    x: np.ndarray,
+    y: np.ndarray,
+    grid: np.ndarray,
+    corners: np.ndarray,
+    center: Tuple[float, float],
+    title: str = "光栅区域拟合结果",
+    threshold_mask: Optional[np.ndarray] = None,
+    selected_mask: Optional[np.ndarray] = None,
+    threshold_range: Optional[Tuple[float, float]] = None,
+) -> go.Figure:
+    """
+    绘制离线光斑标定结果：
+    - DE 热力图
+    - 阈值分割轮廓（可选）
+    - 最终选中连通域轮廓（可选）
+    - 旋转矩形与中心点
+    """
+    data_vmin = float(np.nanmin(grid))
+    data_vmax = float(np.nanmax(grid))
+
+    if threshold_range is not None:
+        colorscale = _build_plotly_colorscale(threshold_range, data_vmin, data_vmax)
+    else:
+        colorscale = "RdYlGn"
+
+    fig = go.Figure(data=go.Heatmap(
+        x=x,
+        y=y,
+        z=grid,
+        colorscale=colorscale,
+        zmin=data_vmin,
+        zmax=data_vmax,
+        colorbar=dict(title="DE"),
+        hovertemplate="X: %{x:.2f}<br>Y: %{y:.2f}<br>DE: %{z:.4f}<extra></extra>",
+    ))
+
+    if threshold_mask is not None and np.any(threshold_mask):
+        fig.add_trace(go.Contour(
+            x=x,
+            y=y,
+            z=threshold_mask.astype(float),
+            contours=dict(
+                start=0.5,
+                end=0.5,
+                size=1.0,
+                coloring="none",
+            ),
+            line=dict(color="rgba(255,255,255,0.6)", width=1.5),
+            showscale=False,
+            hoverinfo="skip",
+            name="阈值区域",
+        ))
+
+    if selected_mask is not None and np.any(selected_mask):
+        fig.add_trace(go.Contour(
+            x=x,
+            y=y,
+            z=selected_mask.astype(float),
+            contours=dict(
+                start=0.5,
+                end=0.5,
+                size=1.0,
+                coloring="none",
+            ),
+            line=dict(color="#00e5ff", width=2.5),
+            showscale=False,
+            hoverinfo="skip",
+            name="拟合区域",
+        ))
+
+    corners_closed = np.vstack([corners, corners[0]])
+    fig.add_trace(go.Scatter(
+        x=corners_closed[:, 0],
+        y=corners_closed[:, 1],
+        mode="lines",
+        line=dict(color="#ffbf00", width=3),
+        name="拟合矩形",
+        hoverinfo="skip",
+    ))
+
+    fig.add_trace(go.Scatter(
+        x=[center[0]],
+        y=[center[1]],
+        mode="markers",
+        marker=dict(size=10, color="#ff0055", symbol="x"),
+        name="矩形中心",
+        hovertemplate="中心 X: %{x:.4f}<br>中心 Y: %{y:.4f}<extra></extra>",
+    ))
+
+    fig.update_layout(
+        title=title,
+        xaxis_title="X (mm)",
+        yaxis_title="Y (mm)",
+        yaxis_scaleanchor="x",
+        width=900,
+        height=700,
+        legend=dict(orientation="h", y=1.02, x=0.0),
+    )
+
+    return fig
