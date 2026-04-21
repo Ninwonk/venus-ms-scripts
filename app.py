@@ -56,10 +56,12 @@ with st.sidebar:
     else:
         uploaded = st.file_uploader("上传 .strc 文件", type=["strc", "hdf5", "h5"])
         if uploaded is not None:
-            # 保存上传的文件到临时路径
+            # 保存上传的文件到临时路径（分块写入，避免大文件撑爆内存）
             temp_path = f"_uploaded_{uploaded.name}"
-            with open(temp_path, "wb") as f:
-                f.write(uploaded.read())
+            if not os.path.exists(temp_path):
+                with open(temp_path, "wb") as f:
+                    while chunk := uploaded.read(8 * 1024 * 1024):  # 8MB 分块
+                        f.write(chunk)
             data_file_path = temp_path
 
     st.divider()
